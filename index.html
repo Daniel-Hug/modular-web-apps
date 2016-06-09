@@ -1,50 +1,277 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+        <title>Render views fast in a modular web app</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/solarized.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+        <style>
+            p {
+                text-align: left;
+            }
+            pre.inline {
+                display: inline-block;
+                width: auto;
+                margin: 0;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Render views fast in a modular web app</h1>
+                    <p style="text-align: center;">Daniel Hug</p>
+                </section>
+                <section>
+                    <h2>What I want in a Single-Page web App (SPA)</h2>
+                    <ul>
+                        <li>speed<span class="fragment">: better than templating.</span></li>
+                        <li>modularity<span class="fragment">: better than frameworks</span></li>
+                        <li>scalability<span class="fragment">: Don't Repeat Yourself!</span></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Better than templating?</h2>
+                    <p>The template:</p>
+                    <pre><code class="html"><ul id="shopping-list">
+    <script id="item-template" type="text/handlebars">
+        <li>{{title}}: buy {{quantity}}</li>
+    </script>
+</ul></code></pre>
+                    <p>The goal:</p>
+                    <pre><code class="js">renderItem({
+    title: 'eggs',
+    quantity: '1 dozen'
+});</code></pre>
+                </section>
+                <section>
+                    <h2>The downsides of templating</h2>
+                    <pre><code class="js">var templateSrc = $('#item-template').html();
+var getItemSrc = Handlebars.compile(templateSrc);
 
-		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+var $shoppingList = $('#shopping-list');
+function renderItem(item) {
+    var itemSrc = getItemSrc(item);
+    $shoppingList.append(itemSrc);
+}</code></pre>
+                    <ul>
+                        <li class="fragment">output is a string so elements must be queried to obtain their references</li>
+                        <li class="fragment">Updates to state refresh the whole template</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Simplify with jQuery</h2>
+                    <pre><code class="js">function renderItem(item) {
+    var $li = $('li').text(item.title + ': buy ' + item.quantity);
+    $shoppingList.append($li);
+}</code></pre>
+                    <ul>
+                        <li>element references :)</li>
+                        <li class="fragment">To change a prop we must still re-render everything :(</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Observable Objects: <a href="https://github.com/daniel-hug/snoopy">Snoopy</a></h2>
+                    <p><a href="https://github.com/daniel-hug/snoopy">github.com/daniel-hug/snoopy</a></p>
+                    <pre><code class="js">function renderItem(item) {
+    var $li = $('&lt;li>');
+    item.snoop('title quantity', function(title, quantity) {
+        $li.text(title + ': buy ' + quantity);
+    });
+    $shoppingList.append($li);
+}
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+var eggs = new Snoopy({
+    title: 'eggs',
+    quantity: '1 dozen'
+});
+renderItem(eggs);</code></pre>
+                    <ul>
+                        <li>element references :)</li>
+                        <li class="fragment"><pre class="inline"><code class="js">eggs.set('quantity', '2 dozen');</code></pre> won't refresh entire view.</li>
+                    </ul>
+                </section>
+                <!-- <section>
+                    <h2>Managing state</h2>
+                    <section>
+                        <p>An example</p>
+                        <pre><code class="html"><button class="counter">0</button>
+
+<script>
+// increment value
+$('.counter').click(clickHandler);
+</script></code></pre>
+                    </section>
+                    <section>
+                        <p>In the DOM:</p>
+                        <pre><code class="js">function clickHandler() {
+    this.textContent = +this.textContent + 1;
+}</code></pre>
+                        <p>In a variable:</p>
+                        <pre><code class="js">var numClicks = 0;
+function clickHandler() {
+    this.textContent = ++numClicks;
+}</code></pre>
+                        <p>Neither will remain DRY when scaled to multiple views</p>
+                    </section>
+                    <section>
+                        <p>Don't mix modules</p>
+                        <pre><code class="js">var numClicks = 0;
+function clickHandler() {
+    numClicks++;
+    this.textContent = newNum;
+    otherEl.textContent = newNum;
+    // ...
+}</code></pre>
+                    </section>
+                    <section>
+                        <p>Observables: <a href="https://github.com/daniel-hug/snoopy">Snoopy</a></p>
+                        <pre><code class="js">var counter = new Snoopy({numClicks: 0});
+function clickHandler() {
+    var button = this;
+    counter.set('numClicks' counter.count + 1);
+    counter.snoop('numClicks', function(numClicks) {
+        button.textContent = numClicks;
+    });
+}</code></pre>
+                    </section>
+                </section> -->
+                <section>
+                    <h2>Smart data-binding: <a href="https://github.com/daniel-hug/dom-builder">DOM Builder</a></h2>
+                    <p><a href="https://github.com/daniel-hug/dom-builder">github.com/daniel-hug/dom-builder</a></p>
+                    <pre><code class="js">function renderItem(item) {
+    var li = dom({ el: 'li',
+        kids: [item.snoop('title'), ': buy ', item.snoop('quantity')]
+    });
+    $shoppingList.append(li);
+}</code></pre>
+                    <ul>
+                        <li>a view rendering module</li>
+                        <li class="fragment">accepts an observe function in place of any value to have it be live-bound to the state</li>
+                        <li class="fragment">updates only the necessary parts of the view without diffing</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Keep a list: <a href="https://github.com/Daniel-Hug/observable-array">Observable Array</a></h2>
+                    <p><a href="https://github.com/daniel-hug/observable-array">github.com/daniel-hug/observable-array</a></p>
+                    <pre><code class="js">// create an observable array
+var nums = new ObservableArray([1, 2, 3]);
+
+// Get notified when it changes
+nums.on('push', function() {
+    console.log('new values: ' + [].join.call(arguments);
+});
+
+// add 2 items
+nums.push(4, 5);</code></pre>
+                    <ul>
+                        <li>get notified when items are added or removed</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Map the array to the DOM: <a href="https://github.com/Daniel-Hug/dom-array">DOM Array</a></h2>
+                    <p><a href="https://github.com/daniel-hug/dom-array">github.com/daniel-hug/dom-array</a></p>
+                    <pre><code class="js">// create an observable array
+var nums = new ObservableArray([1, 2, 3]);
+
+var listView = new DomArray(nums, $('ul')[0], function(num) {
+    return $('&lt;li>').text('number: ' + num);
+});
+
+// add 2 items
+nums.push(4, 5);</code></pre>
+                </section>
+ <!--                <section>
+                    <h2>How can this work?</h2>
+                    <pre><code class="js">[
+    function observeTitle(observer) {
+        observer(item.title);
+        // call observer again with new value when it changes
+    },
+    ': buy ',
+    item.snoop('quantity');
+]</code></pre>
+                </section>
+                <section
+                    data-background-image="img/dom-builder-plus-snoopy.jpg"
+                    data-background-size="contain"></section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## What is the DOM?
+
+                        The way JS manipulates nodes on a webpage.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Multiple ways
+                        - vanilla JS (native DOM api)
+                        - DOM libraries e.g. jQuery
+                        - templating e.g. handlebars
+                    </script>
+                </section>
+                <section>
+                    <h2>Let's make a heading!</h2>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### with vanilla JS
+                            ```js
+                            var h1 = document.createElement('h1');
+                            h1.textContent = "Let's make a heading!";
+                            document.body.appendChild(h1);
+                            ```
+                        </script>
+                    </section>
+
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### with jQuery
+                            ```js
+                            var $h1 = $('h1').text("Let's make a heading!");
+                            $h1.appendTo(document.body);
+                            ```
+                        </script>
+                    </section>
+                </section> -->
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
 </html>
