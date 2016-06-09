@@ -21,6 +21,7 @@
             document.getElementsByTagName( 'head' )[0].appendChild( link );
         </script>
 
+        <!-- custom styles -->
         <style>
             p {
                 text-align: left;
@@ -31,10 +32,17 @@
                 margin: 0;
                 vertical-align: middle;
             }
+
+            .shortlink-hint {
+                position: fixed;
+                left: 20px;
+                z-index: 10;
+            }
         </style>
     </head>
     <body>
         <div class="reveal">
+            <p class="shortlink-hint">https://git.io/voYWW</p>
             <div class="slides">
                 <section>
                     <h1>Render views fast in a modular web app</h1>
