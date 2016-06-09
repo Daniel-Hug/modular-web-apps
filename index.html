@@ -23,7 +23,7 @@
 
         <!-- custom styles -->
         <style>
-            p {
+            h3, p {
                 text-align: left;
             }
             pre.inline {
@@ -38,6 +38,18 @@
                 left: 20px;
                 z-index: 10;
             }
+
+            .slides iframe {
+                width: 50% !important;
+                min-height: 280px !important;
+                transform: scale(2) !important;
+                margin-top: 140px !important;
+                /*
+                margin-top = 
+                (min-height: 300px) *
+                ((scale: 2) - 1) / 2
+                */
+            }
         </style>
     </head>
     <body>
@@ -49,7 +61,7 @@
                     <p style="text-align: center;">Daniel Hug</p>
                 </section>
                 <section>
-                    <h2>What I want in a Single-Page web App (SPA)</h2>
+                    <h2>What I want in a Single-Page web App</h2>
                     <ul>
                         <li>speed<span class="fragment">: better than templating.</span></li>
                         <li>modularity<span class="fragment">: better than frameworks</span></li>
@@ -57,18 +69,18 @@
                     </ul>
                 </section>
                 <section>
-                    <h2>Better than templating?</h2>
+                    <h2>Templating</h2>
+                    <p>The goal:</p>
+                    <pre><code class="js">renderItem({
+    title: 'eggs',
+    quantity: '1 dozen'
+});</code></pre>
                     <p>The template:</p>
                     <pre><code class="html"><ul id="shopping-list">
     <script id="item-template" type="text/handlebars">
         <li>{{title}}: buy {{quantity}}</li>
     </script>
 </ul></code></pre>
-                    <p>The goal:</p>
-                    <pre><code class="js">renderItem({
-    title: 'eggs',
-    quantity: '1 dozen'
-});</code></pre>
                 </section>
                 <section>
                     <h2>The downsides of templating</h2>
@@ -98,8 +110,9 @@ function renderItem(item) {
                 </section>
                 <section>
                     <h2>Observable Objects: <a href="https://github.com/daniel-hug/snoopy">Snoopy</a></h2>
-                    <p><a href="https://github.com/daniel-hug/snoopy">github.com/daniel-hug/snoopy</a></p>
-                    <pre><code class="js">function renderItem(item) {
+                    <section>
+                        <p><a href="https://github.com/daniel-hug/snoopy">github.com/daniel-hug/snoopy</a></p>
+                        <pre><code class="js">function renderItem(item) {
     var $li = $('&lt;li>');
     item.snoop('title quantity', function(title, quantity) {
         $li.text(title + ': buy ' + quantity);
@@ -112,10 +125,14 @@ var eggs = new Snoopy({
     quantity: '1 dozen'
 });
 renderItem(eggs);</code></pre>
-                    <ul>
-                        <li>element references :)</li>
-                        <li class="fragment"><pre class="inline"><code class="js">eggs.set('quantity', '2 dozen');</code></pre> won't refresh entire view.</li>
-                    </ul>
+                        <ul>
+                            <li>element references :)</li>
+                            <li class="fragment"><pre class="inline"><code class="js">eggs.set('quantity', '2 dozen');</code></pre> won't refresh entire view.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <a class="jsbin-embed" href="http://jsbin.com/tikusi/embed?js">DOM Builder demo on jsbin.com</a>
+                    </section>
                 </section>
                 <!-- <section>
                     <h2>Managing state</h2>
@@ -207,7 +224,15 @@ var listView = new DomArray(nums, $('ul')[0], function(num) {
 // add 2 items
 nums.push(4, 5);</code></pre>
                 </section>
- <!--                <section>
+                <section>
+                    <h2>Thank you!</h2>
+                    <h3>Where to find me:</h3>
+                    <ul>
+                        <li><a href="https://twitter.com/CSSHug">@CSSHug</a></li>
+                        <li><a href="http://codeforthekingdom.org/seattle-hackathon-2016.html">Code for the Kingdom global hackathon</a>: Seattle Oct 21-23</li>
+                    </ul>
+                </section>
+                <!--<section>
                     <h2>How can this work?</h2>
                     <pre><code class="js">[
     function observeTitle(observer) {
@@ -260,7 +285,7 @@ nums.push(4, 5);</code></pre>
                             ```
                         </script>
                     </section>
-                </section> -->
+                </section>-->
             </div>
         </div>
 
@@ -281,5 +306,6 @@ nums.push(4, 5);</code></pre>
                 ]
             });
         </script>
+        <script src="http://static.jsbin.com/js/embed.min.js?3.35.13"></script>
     </body>
 </html>
