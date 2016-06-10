@@ -131,7 +131,7 @@ renderItem(eggs);</code></pre>
                         </ul>
                     </section>
                     <section>
-                        <a class="jsbin-embed" href="http://jsbin.com/tikusi/embed?js">DOM Builder demo on jsbin.com</a>
+                        <a class="jsbin-embed" href="http://jsbin.com/fiyijo/embed?js">Snoopy demo on jsbin.com</a>
                     </section>
                 </section>
                 <!-- <section>
@@ -181,48 +181,63 @@ function clickHandler() {
                 </section> -->
                 <section> <!-- https://git.io/vomn2 -->
                     <h2>Smart data-binding: <a href="https://github.com/daniel-hug/dom-builder">DOM Builder</a></h2>
-                    <p><a href="https://github.com/daniel-hug/dom-builder">github.com/daniel-hug/dom-builder</a></p>
-                    <pre><code class="js">function renderItem(item) {
-    var li = dom({ el: 'li',
-        kids: [item.snoop('title'), ': buy ', item.snoop('quantity')]
-    });
-    $shoppingList.append(li);
-}</code></pre>
-                    <ul>
-                        <li>a view rendering module</li>
-                        <li class="fragment">accepts an observe function in place of any value to have it be live-bound to the state</li>
-                        <li class="fragment">updates only the necessary parts of the view without diffing</li>
-                    </ul>
+                    <section>
+                        <p><a href="https://github.com/daniel-hug/dom-builder">github.com/daniel-hug/dom-builder</a></p>
+                        <pre><code class="js">function renderItem(item) {
+        var li = dom({ el: 'li',
+            kids: [item.snoop('title'), ': buy ', item.snoop('quantity')]
+        });
+        $shoppingList.append(li);
+    }</code></pre>
+                        <ul>
+                            <li>a view rendering module</li>
+                            <li class="fragment">accepts an observe function in place of any value to have it be live-bound to the state</li>
+                            <li class="fragment">updates only the necessary parts of the view without diffing</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <a class="jsbin-embed" href="http://jsbin.com/wapuhav/embed?js">DOM Builder + Snoopy demo on jsbin.com</a>
+                    </section>
                 </section>
                 <section>
                     <h2>Keep a list: <a href="https://github.com/Daniel-Hug/observable-array">Observable Array</a></h2>
-                    <p><a href="https://github.com/daniel-hug/observable-array">github.com/daniel-hug/observable-array</a></p>
-                    <pre><code class="js">// create an observable array
-var nums = new ObservableArray([1, 2, 3]);
+                    <section>
+                        <p><a href="https://github.com/daniel-hug/observable-array">github.com/daniel-hug/observable-array</a></p>
+                        <pre><code class="js">// create an observable array
+    var nums = new ObservableArray([1, 2, 3]);
 
-// Get notified when it changes
-nums.on('push', function() {
-    console.log('new values: ' + [].join.call(arguments);
-});
+    // Get notified when it changes
+    nums.on('push', function() {
+        console.log('new values: ' + [].join.call(arguments));
+    });
 
-// add 2 items
-nums.push(4, 5);</code></pre>
-                    <ul>
-                        <li>get notified when items are added or removed</li>
-                    </ul>
+    // add 2 items
+    nums.push(4, 5);</code></pre>
+                        <ul>
+                            <li>get notified when items are added or removed</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <a class="jsbin-embed" href="http://jsbin.com/zofufi/embed?js">Observable Array demo on jsbin.com</a>
+                    </section>
                 </section>
                 <section>
-                    <h2>Map the array to the DOM: <a href="https://github.com/Daniel-Hug/dom-array">DOM Array</a></h2>
-                    <p><a href="https://github.com/daniel-hug/dom-array">github.com/daniel-hug/dom-array</a></p>
-                    <pre><code class="js">// create an observable array
-var nums = new ObservableArray([1, 2, 3]);
+                    <section>
+                        <h2>Map the array to the DOM: <a href="https://github.com/Daniel-Hug/dom-array">DOM Array</a></h2>
+                        <p><a href="https://github.com/daniel-hug/dom-array">github.com/daniel-hug/dom-array</a></p>
+                        <pre><code class="js">// create an observable array
+    var nums = new ObservableArray([1, 2, 3]);
 
-var listView = new DomArray(nums, $('ul')[0], function(num) {
-    return $('&lt;li>').text('number: ' + num);
-});
+    var listView = new DomArray(nums, $('ul')[0], function(num) {
+        return $('&lt;li>').text('number: ' + num);
+    });
 
-// add 2 items
-nums.push(4, 5);</code></pre>
+    // add 2 items
+    nums.push(4, 5);</code></pre>
+                    </section>
+                    <section>
+                        <a class="jsbin-embed" href="http://jsbin.com/replace/embed?js">Observable Array demo on jsbin.com</a>
+                    </section>
                 </section>
                 <section>
                     <h2>Thank you!</h2>
