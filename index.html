@@ -71,27 +71,33 @@
                 <section>
                     <h2>Templating</h2>
                     <p>The goal:</p>
-                    <pre><code class="js">renderItem({
+                    <pre><code class="js" data-trim>
+renderItem({
     title: 'eggs',
     quantity: '1 dozen'
-});</code></pre>
+});
+                    </code></pre>
                     <p>The template:</p>
-                    <pre><code class="html"><ul id="shopping-list">
+                    <pre><code class="html" data-trim>
+<ul id="shopping-list">
     <script id="item-template" type="text/handlebars">
         <li>{{title}}: buy {{quantity}}</li>
     </script>
-</ul></code></pre>
+</ul>
+                    </code></pre>
                 </section>
                 <section>
                     <h2>The downsides of templating</h2>
-                    <pre><code class="js">var templateSrc = $('#item-template').html();
+                    <pre><code class="js" data-trim>
+var templateSrc = $('#item-template').html();
 var getItemSrc = Handlebars.compile(templateSrc);
 
 var $shoppingList = $('#shopping-list');
 function renderItem(item) {
     var itemSrc = getItemSrc(item);
     $shoppingList.append(itemSrc);
-}</code></pre>
+}
+                    </code></pre>
                     <ul>
                         <li class="fragment">output is a string so elements must be queried to obtain their references</li>
                         <li class="fragment">Updates to state refresh the whole template</li>
@@ -99,10 +105,12 @@ function renderItem(item) {
                 </section>
                 <section>
                     <h2>Simplify with jQuery</h2>
-                    <pre><code class="js">function renderItem(item) {
+                    <pre><code class="js" data-trim>
+function renderItem(item) {
     var $li = $('li').text(item.title + ': buy ' + item.quantity);
     $shoppingList.append($li);
-}</code></pre>
+}
+                    </code></pre>
                     <ul>
                         <li>element references :)</li>
                         <li class="fragment">To change a prop we must still re-render everything :(</li>
@@ -112,7 +120,8 @@ function renderItem(item) {
                     <h2>Observable Objects: <a href="https://github.com/daniel-hug/snoopy">Snoopy</a></h2>
                     <section>
                         <p><a href="https://github.com/daniel-hug/snoopy">github.com/daniel-hug/snoopy</a></p>
-                        <pre><code class="js">function renderItem(item) {
+                        <pre><code class="js" data-trim>
+function renderItem(item) {
     var $li = $('&lt;li>');
     item.snoop('title quantity', function(title, quantity) {
         $li.text(title + ': buy ' + quantity);
@@ -124,7 +133,8 @@ var eggs = new Snoopy({
     title: 'eggs',
     quantity: '1 dozen'
 });
-renderItem(eggs);</code></pre>
+renderItem(eggs);
+                        </code></pre>
                         <ul>
                             <li>element references :)</li>
                             <li class="fragment"><pre class="inline"><code class="js">eggs.set('quantity', '2 dozen');</code></pre> won't refresh entire view.</li>
@@ -183,12 +193,14 @@ function clickHandler() {
                     <h2>Smart data-binding: <a href="https://github.com/daniel-hug/dom-builder">DOM Builder</a></h2>
                     <section>
                         <p><a href="https://github.com/daniel-hug/dom-builder">github.com/daniel-hug/dom-builder</a></p>
-                        <pre><code class="js">function renderItem(item) {
-        var li = dom({ el: 'li',
-            kids: [item.snoop('title'), ': buy ', item.snoop('quantity')]
-        });
-        $shoppingList.append(li);
-    }</code></pre>
+                        <pre><code class="js" data-trim>
+function renderItem(item) {
+    var li = dom({ el: 'li',
+        kids: [item.snoop('title'), ': buy ', item.snoop('quantity')]
+    });
+    $shoppingList.append(li);
+}
+                        </code></pre>
                         <ul>
                             <li>a view rendering module</li>
                             <li class="fragment">accepts an observe function in place of any value to have it be live-bound to the state</li>
@@ -203,16 +215,18 @@ function clickHandler() {
                     <h2>Keep a list: <a href="https://github.com/Daniel-Hug/observable-array">Observable Array</a></h2>
                     <section>
                         <p><a href="https://github.com/daniel-hug/observable-array">github.com/daniel-hug/observable-array</a></p>
-                        <pre><code class="js">// create an observable array
-    var nums = new ObservableArray([1, 2, 3]);
+                        <pre><code class="js" data-trim>
+// create an observable array
+var nums = new ObservableArray([1, 2, 3]);
 
-    // Get notified when it changes
-    nums.on('push', function() {
-        console.log('new values: ' + [].join.call(arguments));
-    });
+// Get notified when it changes
+nums.on('push', function() {
+    console.log('new values: ' + [].join.call(arguments));
+});
 
-    // add 2 items
-    nums.push(4, 5);</code></pre>
+// add 2 items
+nums.push(4, 5);
+                        </code></pre>
                         <ul>
                             <li>get notified when items are added or removed</li>
                         </ul>
@@ -225,15 +239,17 @@ function clickHandler() {
                     <section>
                         <h2>Map the array to the DOM: <a href="https://github.com/Daniel-Hug/dom-array">DOM Array</a></h2>
                         <p><a href="https://github.com/daniel-hug/dom-array">github.com/daniel-hug/dom-array</a></p>
-                        <pre><code class="js">// create an observable array
-    var nums = new ObservableArray([1, 2, 3]);
+                        <pre><code class="js" data-trim>
+// create an observable array
+var nums = new ObservableArray([1, 2, 3]);
 
-    var listView = new DomArray(nums, $('ul')[0], function(num) {
-        return $('&lt;li>').text('number: ' + num);
-    });
+var listView = new DomArray(nums, $('ul')[0], function(num) {
+    return $('&lt;li>').text('number: ' + num);
+});
 
-    // add 2 items
-    nums.push(4, 5);</code></pre>
+// add 2 items
+nums.push(4, 5);
+                        </code></pre>
                     </section>
                     <section>
                         <a class="jsbin-embed" href="http://jsbin.com/replace/embed?js">Observable Array demo on jsbin.com</a>
